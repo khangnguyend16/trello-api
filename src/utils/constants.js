@@ -2,6 +2,7 @@
 export const WHITELIST_DOMAINS = [
   // Không cần localhost nữa vì ở file cors đã luôn luôn cho phép môi trường dev
   // "http://localhost:5173",
+  "https://trello-web-amber-tau.vercel.app",
   // ... (domain chính thức sau deploy)
 ];
 
