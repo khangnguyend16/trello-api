@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { corsOptions } from "./config/cors";
 import exitHook from "async-exit-hook";
-import { CONNECT_DB, CLOSE_DB, GET_DB } from "~/config/mongodb";
+import { CONNECT_DB, CLOSE_DB } from "~/config/mongodb";
 import { env } from "~/config/environment";
 import { APIs_V1 } from "~/routes/v1";
 import { errorHandlingMiddleware } from "./middlewares/errorHandlingMiddleware";
@@ -25,10 +25,19 @@ const START_SERVER = () => {
   // Middleware xử lý lỗi tập trung
   app.use(errorHandlingMiddleware);
 
-  app.listen(env.APP_PORT, env.APP_HOST, () => {
-    // eslint-disable-next-line no-console
-    console.log(`3. Hello ${env.AUTHOR}, Back-end server is running successfully at Host: ${env.APP_HOST} and Port: ${env.APP_PORT}`);
-  });
+  if (env.BUILD_MODE === "production") {
+    // Môi trường Production (cụ thể hiện tại đang support Render.com)
+    app.listen(process.evn.PORT, () => {
+      // eslint-disable-next-line no-console
+      console.log(`3. Production: Hello ${env.AUTHOR}, Back-end server is running successfully at Port: ${process.env.PORT}`);
+    });
+  } else {
+    // Môi trường Local Dev
+    app.listen(env.LOCAL_DEV_APP_PORT, env.LOCAL_DEV_APP_HOST, () => {
+      // eslint-disable-next-line no-console
+      console.log(`3. Local DEV: Hello ${env.AUTHOR}, Back-end server is running successfully at Host: ${env.APP_HOST} and Port: ${env.APP_PORT}`);
+    });
+  }
 
   // Thực hiện các tác vụ clean-up trước khi dừng server (dừng server khi Ctrl+C hoặc process.exit)
   exitHook(() => {
