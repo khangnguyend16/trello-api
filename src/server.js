@@ -27,7 +27,7 @@ const START_SERVER = () => {
 
   if (env.BUILD_MODE === "production") {
     // Môi trường Production (cụ thể hiện tại đang support Render.com)
-    app.listen(process.evn.PORT, () => {
+    app.listen(process.env.PORT, () => {
       // eslint-disable-next-line no-console
       console.log(`3. Production: Hello ${env.AUTHOR}, Back-end server is running successfully at Port: ${process.env.PORT}`);
     });
