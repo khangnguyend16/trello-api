@@ -1,3 +1,4 @@
+// hello
 import express from "express";
 import cors from "cors";
 import { corsOptions } from "./config/cors";
@@ -35,7 +36,9 @@ const START_SERVER = () => {
     // Môi trường Local Dev
     app.listen(env.LOCAL_DEV_APP_PORT, env.LOCAL_DEV_APP_HOST, () => {
       // eslint-disable-next-line no-console
-      console.log(`3. Local DEV: Hello ${env.AUTHOR}, Back-end server is running successfully at Host: ${env.APP_HOST} and Port: ${env.APP_PORT}`);
+      console.log(
+        `3. Local DEV: Hello ${env.AUTHOR}, Back-end server is running successfully at Host: ${env.LOCAL_DEV_APP_HOST} and Port: ${env.LOCAL_DEV_APP_PORT}`
+      );
     });
   }
 
