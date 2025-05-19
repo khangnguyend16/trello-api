@@ -1,4 +1,3 @@
-// hello
 import express from "express";
 import cors from "cors";
 import { corsOptions } from "./config/cors";
@@ -7,9 +6,20 @@ import { CONNECT_DB, CLOSE_DB } from "~/config/mongodb";
 import { env } from "~/config/environment";
 import { APIs_V1 } from "~/routes/v1";
 import { errorHandlingMiddleware } from "./middlewares/errorHandlingMiddleware";
+import cookieParser from "cookie-parser";
 
 const START_SERVER = () => {
   const app = express();
+
+  // Fix cái vụ Cache from disk của ExpressJS
+  // Trình duyệt không được lưu bất kỳ nội dung nào của response này vào cache, kể cả memory cache lẫn disk cache.
+  app.use((req, res, next) => {
+    res.set("Cache-Control", "no-store");
+    next();
+  });
+
+  // Cấu hình cookie parser
+  app.use(cookieParser());
 
   // Xử lý CORS
   app.use(cors(corsOptions));
