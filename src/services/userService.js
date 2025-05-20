@@ -106,10 +106,40 @@ const login = async (reqBody) => {
       // 5
       env.ACCESS_TOKEN_LIFE
     );
-    const refreshToken = await JwtProvider.generateToken(userInfo, env.REFRESH_TOKEN_SECRET_SIGNATURE, env.REFRESH_TOKEN_LIFE);
+    const refreshToken = await JwtProvider.generateToken(
+      userInfo,
+      env.REFRESH_TOKEN_SECRET_SIGNATURE,
+      // 20
+      env.REFRESH_TOKEN_LIFE
+    );
 
     // Trả về thông tin của user kèm theo 2 tokens vừa tạo
     return { accessToken, refreshToken, ...pickUser(existUser) };
+  } catch (error) {
+    throw error;
+  }
+};
+
+const refreshToken = async (clientRefreshToken) => {
+  try {
+    // Verify / giải mã refresh token xem có hợp lệ không
+    const refreshTokenDecoded = await JwtProvider.verifyToken(clientRefreshToken, env.REFRESH_TOKEN_SECRET_SIGNATURE);
+
+    // Lấy luôn thông tin user từ refreshToken => tiết kiệm query vào DB
+    const userInfo = {
+      _id: refreshTokenDecoded._id,
+      email: refreshTokenDecoded.email,
+    };
+
+    // Tạo accessToken mới
+    const accessToken = await JwtProvider.generateToken(
+      userInfo,
+      env.ACCESS_TOKEN_SECRET_SIGNATURE,
+      // 5
+      env.ACCESS_TOKEN_LIFE
+    );
+
+    return { accessToken };
   } catch (error) {
     throw error;
   }
@@ -119,4 +149,5 @@ export const userService = {
   createNew,
   verifyAccount,
   login,
+  refreshToken,
 };
