@@ -7,6 +7,10 @@ import { env } from "~/config/environment";
 import { APIs_V1 } from "~/routes/v1";
 import { errorHandlingMiddleware } from "./middlewares/errorHandlingMiddleware";
 import cookieParser from "cookie-parser";
+// Xử lý socket real-time với gói socket.io
+import http from "http";
+import socketIo from "socket.io";
+import { inviteUserToBoardSocket } from "./sockets/inviteUserToBoardSocket";
 
 const START_SERVER = () => {
   const app = express();
@@ -36,15 +40,27 @@ const START_SERVER = () => {
   // Middleware xử lý lỗi tập trung
   app.use(errorHandlingMiddleware);
 
+  // Tạo 1 server mới bọc app của express để làm real-time với socket.io
+  const server = http.createServer(app);
+  // Khởi tạo biến io với server và cors
+  const io = socketIo(server, { cors: corsOptions });
+  io.on("connection", (socket) => {
+    // Gọi các socket tùy theo tính năng ở đây
+    inviteUserToBoardSocket(socket);
+
+    //...vv
+  });
+
   if (env.BUILD_MODE === "production") {
     // Môi trường Production (cụ thể hiện tại đang support Render.com)
-    app.listen(process.env.PORT, () => {
+    // Dùng server.listen thay vì app.listen vì lúc này server đã bao gồm express app và đã config socket.io
+    server.listen(process.env.PORT, () => {
       // eslint-disable-next-line no-console
       console.log(`3. Production: Hello ${env.AUTHOR}, Back-end server is running successfully at Port: ${process.env.PORT}`);
     });
   } else {
     // Môi trường Local Dev
-    app.listen(env.LOCAL_DEV_APP_PORT, env.LOCAL_DEV_APP_HOST, () => {
+    server.listen(env.LOCAL_DEV_APP_PORT, env.LOCAL_DEV_APP_HOST, () => {
       // eslint-disable-next-line no-console
       console.log(
         `3. Local DEV: Hello ${env.AUTHOR}, Back-end server is running successfully at Host: ${env.LOCAL_DEV_APP_HOST} and Port: ${env.LOCAL_DEV_APP_PORT}`
