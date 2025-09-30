@@ -7,7 +7,7 @@ let trelloDatabaseInstance = null;
 
 // Khởi tạo 1 đối tượng mongoClientInstance để connect tới MongoDB
 const mongoClientInstance = new MongoClient(env.MONGODB_URI, {
-  // serverApi có từ phiên bản MongoDB 5.0.0 trở lên, có thể ko cần dùng tới, còn nếu dùng thì ta sẽ chỉ dindnhj 1 Stable API Version của MongoDB
+  // serverApi có từ phiên bản MongoDB 5.0.0 trở lên, có thể ko cần dùng tới, còn nếu dùng thì ta sẽ chỉ định 1 Stable API Version của MongoDB
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
